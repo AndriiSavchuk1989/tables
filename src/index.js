@@ -13,6 +13,13 @@ function TableCell(props) {
   );
 }
 
+function tableRowCreator(listOfRows) {
+  const count = listOfRows.length;
+  console.log(count);
+}
+
+tableRowCreator();
+
 function TableRow(props) {
   const { cells, editFunc } = props;
   return (
