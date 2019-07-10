@@ -13,9 +13,14 @@ function TableCell(props) {
   );
 }
 
-function tableRowCreator(listOfRows) {
-  const count = listOfRows.length;
-  console.log(count);
+function tableRowCreator(listOfCells = []) {
+  return (
+    <TableRow>
+      {listOfCells.map(cell => (
+        <TableCell data={cell.value} />
+      ))}
+    </TableRow>
+  );
 }
 
 tableRowCreator();
