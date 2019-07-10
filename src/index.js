@@ -17,7 +17,7 @@ function tableRowCreator(listOfCells = []) {
   return (
     <TableRow>
       {listOfCells.map(cell => (
-        <TableCell data={cell.value} />
+        <TableCell data={cell.value} key={cell.value} />
       ))}
     </TableRow>
   );
