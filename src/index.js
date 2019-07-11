@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+//
+import { EditableInput } from "./input";
+
 import "./styles.css";
 
 const lists = [
@@ -71,16 +74,27 @@ const lists = [
 ];
 
 function TableCell(props) {
-  const { data, isEditable, editFunc } = props;
+  const { data, isEditable, editFunc, changeFunc, onTrackChange } = props;
   const isEditableCell = isEditable ? "enable-to-edit" : "unable-to-edit";
   return (
-    <td onClick={editFunc} className={isEditableCell}>
+    <td
+      onClick={editFunc}
+      onChange={changeFunc}
+      onMouseOut={onTrackChange}
+      className={isEditableCell}
+    >
       {data}
+      {isEditable && <EditableInput initialValue={data} />}
     </td>
   );
 }
 
-function tableRowCreator(listOfCells = [], func = null) {
+function tableRowCreator(
+  listOfCells = [],
+  func = null,
+  change = null,
+  track = null
+) {
   return (
     <tr>
       {listOfCells.map(cell => (
@@ -88,48 +102,61 @@ function tableRowCreator(listOfCells = [], func = null) {
           data={cell.value}
           key={cell.value}
           editFunc={func}
+          changeFunc={change}
           isEditable={cell.isEditable}
+          onTrackChange={event => track(event)}
         />
       ))}
     </tr>
   );
 }
 
-tableRowCreator();
-
-function TableRow(props) {
-  const { cells, editFunc } = props;
-  return (
-    <tr>
-      {cells.map(cell =>
-        cell.map(item => (
-          <TableCell
-            data={item.value}
-            isEditable={item.isEditable}
-            editFunc={editFunc}
-          />
-        ))
-      )}
-    </tr>
-  );
-}
-
 function Table(props) {
-  const { list, editFunc } = props;
+  const { list, editFunc, onChangeFunc, onTrackChange } = props;
   return (
     <table>
-      <tbody>{list.map(listItem => tableRowCreator(listItem, editFunc))}</tbody>
+      <tbody>
+        {list.map(listItem =>
+          tableRowCreator(listItem, editFunc, onChangeFunc, onTrackChange)
+        )}
+      </tbody>
     </table>
   );
 }
 
 class TableWrapper extends React.Component {
+  state = { cellData: "" };
   editCell = event => {
     console.log(event.target.className);
+    const { value, nodeName } = event.target;
+    if (nodeName === "INPUT") {
+      this.onTrackChange(value);
+    }
+  };
+
+  editInputHandlerClick = event => {
+    console.log("edit input click", event.target);
+  };
+
+  editInputHandlerChange = event => {
+    console.log("edit input change", event.target);
+  };
+
+  onTrackChange = value => {
+    console.log("tracking change___", value);
+    this.setState({ cellData: value });
   };
 
   render() {
-    return <Table list={lists} editFunc={this.editCell} />;
+    console.log("state from wrapper___", this.state.cellData);
+    return (
+      <Table
+        list={lists}
+        editFunc={this.editCell}
+        onChangeFunc={this.editInputHandlerChange}
+        onTrackChange={this.onTrackChange}
+      />
+    );
   }
 }
 
