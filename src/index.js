@@ -3,68 +3,6 @@ import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-function TableCell(props) {
-  const { data, isEditable, editFunc } = props;
-  const isEditableCell = isEditable ? "enable-to-edit" : "unable-to-edit";
-  return (
-    <td onClick={editFunc} className={isEditableCell}>
-      {data}
-    </td>
-  );
-}
-
-function tableRowCreator(listOfCells = []) {
-  return (
-    <TableRow>
-      {listOfCells.map(cell => (
-        <TableCell data={cell.value} key={cell.value} />
-      ))}
-    </TableRow>
-  );
-}
-
-tableRowCreator();
-
-function TableRow(props) {
-  const { cells, editFunc } = props;
-  return (
-    <tr>
-      {cells.map(cell =>
-        cell.map(item => (
-          <TableCell
-            data={item.value}
-            isEditable={item.isEditable}
-            editFunc={editFunc}
-          />
-        ))
-      )}
-    </tr>
-  );
-}
-
-function Table(props) {
-  const { list, editFunc } = props;
-  return (
-    <table>
-      <tbody>
-        {list.map(listItem => (
-          <TableRow cells={list} editFunc={editFunc} key={listItem.value} />
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
-class TableWrapper extends React.Component {
-  editCell = event => {
-    console.log(event.target.className);
-  };
-
-  render() {
-    return <Table list={lists} editFunc={this.editCell} />;
-  }
-}
-
 const lists = [
   [
     {
@@ -100,37 +38,100 @@ const lists = [
   ],
   [
     {
-      value: "7",
+      value: "6",
       id: 6,
       isEditable: true
     },
     {
-      value: "8",
+      value: "5",
       id: 7,
       isEditable: true
     },
     {
-      value: "9",
+      value: "4",
       id: 8,
       isEditable: true
     },
     {
-      value: "10",
+      value: "3",
       id: 9,
       isEditable: true
     },
     {
-      value: "11",
+      value: "2",
       id: 10,
       isEditable: true
     },
     {
-      value: "12",
+      value: "1",
       id: 11,
       isEditable: true
     }
   ]
 ];
+
+function TableCell(props) {
+  const { data, isEditable, editFunc } = props;
+  const isEditableCell = isEditable ? "enable-to-edit" : "unable-to-edit";
+  return (
+    <td onClick={editFunc} className={isEditableCell}>
+      {data}
+    </td>
+  );
+}
+
+function tableRowCreator(listOfCells = [], func = null) {
+  return (
+    <tr>
+      {listOfCells.map(cell => (
+        <TableCell
+          data={cell.value}
+          key={cell.value}
+          editFunc={func}
+          isEditable={cell.isEditable}
+        />
+      ))}
+    </tr>
+  );
+}
+
+tableRowCreator();
+
+function TableRow(props) {
+  const { cells, editFunc } = props;
+  return (
+    <tr>
+      {cells.map(cell =>
+        cell.map(item => (
+          <TableCell
+            data={item.value}
+            isEditable={item.isEditable}
+            editFunc={editFunc}
+          />
+        ))
+      )}
+    </tr>
+  );
+}
+
+function Table(props) {
+  const { list, editFunc } = props;
+  return (
+    <table>
+      <tbody>{list.map(listItem => tableRowCreator(listItem, editFunc))}</tbody>
+    </table>
+  );
+}
+
+class TableWrapper extends React.Component {
+  editCell = event => {
+    console.log(event.target.className);
+  };
+
+  render() {
+    return <Table list={lists} editFunc={this.editCell} />;
+  }
+}
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<TableWrapper />, rootElement);
